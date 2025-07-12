@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Gateway</title>
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --success: #00b894;
+            --danger: #d63031;
+            --light: #f5f6fa;
+            --dark: #2d3436;
+            --shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .payment-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+            transform: translateY(0);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .payment-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        
+        .payment-header {
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .payment-header h2 {
+            font-weight: 600;
+            font-size: 1.8rem;
+        }
+        
+        .payment-body {
+            padding: 30px;
+        }
+        
+        .payment-method {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .method {
+            background: var(--light);
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .method:hover {
+            transform: translateX(5px);
+            border-color: var(--primary);
+        }
+        
+        .method.active {
+            border-color: var(--primary);
+            background: rgba(108, 92, 231, 0.1);
+        }
+        
+        .method-logo {
+            width: 50px;
+            height: 50px;
+            margin-right: 15px;
+            object-fit: contain;
+        }
+        
+        .method-details {
+            flex: 1;
+        }
+        
+        .method-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+        
+        .method-number {
+            font-size: 0.9rem;
+            color: #636e72;
+            word-break: break-all;
+        }
+        
+        .copy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .copy-btn:hover {
+            background: var(--secondary);
+        }
+        
+        .payment-instruction {
+            margin-top: 30px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #555;
+        }
+        
+        .instruction-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        .instruction-steps {
+            padding-left: 20px;
+        }
+        
+        .instruction-steps li {
+            margin-bottom: 8px;
+        }
+        
+        @media (max-width: 480px) {
+            .payment-body {
+                padding: 20px;
+            }
+            
+            .method {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .method-logo {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+        }
+        
+        /* Animation for copy feedback */
+        .copy-feedback {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: var(--shadow);
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .copy-feedback.show {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <div class="payment-header">
+            <h2>Payment Gateway</h2>
+        </div>
+        <div class="payment-body">
+            <div class="payment-method">
+                <div class="method active" data-method="dana">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/72/Logo_dana_blue.svg" alt="DANA" class="method-logo">
+                    <div class="method-details">
+                        <div class="method-name">DANA</div>
+                        <div class="method-number" id="dana-number">083843916607</div>
+                    </div>
+                    <button class="copy-btn" data-target="dana-number">Copy</button>
+                </div>
+                
+                <div class="method" data-method="ovo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/eb/Logo_ovo_purple.svg" alt="OVO" class="method-logo">
+                    <div class="method-details">
+                        <div class="method-name">OVO</div>
+                        <div class="method-number" id="ovo-number">083843916607</div>
+                    </div>
+                    <button class="copy-btn" data-target="ovo-number">Copy</button>
+                </div>
+                
+                <div class="method" data-method="gopay">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/86/Gopay_logo.svg" alt="GOPAY" class="method-logo">
+                    <div class="method-details">
+                        <div class="method-name">GOPAY</div>
+                        <div class="method-number" id="gopay-number">083843916607</div>
+                    </div>
+                    <button class="copy-btn" data-target="gopay-number">Copy</button>
+                </div>
+            </div>
+            
+            <div class="payment-instruction">
+                <div class="instruction-title">Payment Instructions:</div>
+                <ol class="instruction-steps">
+                    <li>Select your preferred payment method above</li>
+                    <li>Copy the payment number</li>
+                    <li>Open your e-wallet app (DANA/OVO/GoPay)</li>
+                    <li>Paste the number and input the payment amount</li>
+                    <li>Complete the transaction</li>
+                    <li>Send payment proof to the seller if required</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    
+    <div class="copy-feedback" id="copyFeedback">Number copied to clipboard!</div>
+    
+    <script>
+        // Method selection
+        const methods = document.querySelectorAll('.method');
+        methods.forEach(method => {
+            method.addEventListener('click', function() {
+                methods.forEach(m => m.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // Copy functionality
+        const copyButtons = document.querySelectorAll('.copy-btn');
+        const copyFeedback = document.getElementById('copyFeedback');
+        
+        copyButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const targetId = this.getAttribute('data-target');
+                const numberElement = document.getElementById(targetId);
+                const textToCopy = numberElement.textContent;
+                
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    // Show feedback
+                    copyFeedback.classList.add('show');
+                    setTimeout(() => {
+                        copyFeedback.classList.remove('show');
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
